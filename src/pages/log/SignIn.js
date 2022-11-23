@@ -1,22 +1,61 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components"
+import { signIn } from "../../database/database";
 
 export default function SignIn() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [user, setUser] = useState();
+    const [send, setSend] = useState(false);
 
+    function getUser(name, value) {
+        setUser({
+            ... user,
+            [name]: value
+        });
+    }
+
+    function save(event) {
+        event.preventDefault();
+        setSend(true);
+    }
+
+    useEffect(() => {
+        if (send) {
+            signIn(user)
+                .then(res => {
+                    console.log('then');
+                    console.log(res);
+                })
+                .catch(err => {
+                    console.log('catch');
+                    console.log(err);
+                })
+        }
+    }, [send]);
+
+    console.log(user)
     return (
         <Container>
             <Title>TechShop.uu</Title>
-            <Form>
+            <Form onSubmit={save}>
                 <Login>
-                    <input type='text' alt="login" name="login" id="login" />
+                    <input type='text' alt="login" name="name" id="login" onChange={e => {
+                        getUser(
+                            e.target.name,
+                            e.target.value
+                        );}}/>
                     <label htmlFor="login">Login</label>
                 </Login>
                 <Password>
-                    <input type='password' alt="password" name="password" id="password" />
+                    <input type='password' alt="password" name="password" id="password" onChange={e => {
+                        getUser(
+                            e.target.name,
+                            e.target.value
+                        );}}/>
                     <label htmlFor="password">Senha</label>
                 </Password>
-                <Button>Entrar</Button>
+                <Button type={'submit'}>Entrar</Button>
             </Form>
             <Register onClick={() => navigate('/sign-up')}>Não tem uma senha? Cadastre-se</Register>
         </Container>
