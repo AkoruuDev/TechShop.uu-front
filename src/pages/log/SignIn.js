@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components"
 
 export default function SignIn() {
+    const navigate = useNavigate()
+
     return (
         <Container>
             <Title>TechShop.uu</Title>
@@ -15,7 +18,7 @@ export default function SignIn() {
                 </Password>
                 <Button>Entrar</Button>
             </Form>
-            <Register>Não tem uma senha? Cadastre-se</Register>
+            <Register onClick={() => navigate('/sign-up')}>Não tem uma senha? Cadastre-se</Register>
         </Container>
     )
 }
@@ -24,7 +27,7 @@ const Container = styled.section`
     width: 100vw;
     height: 100vh;
 
-    background-color: #66FFAA;
+    background-color: #FFF8B5;
 
     display: flex;
     flex-direction: column;
@@ -103,7 +106,7 @@ const Button = styled.button`
 
     &:hover {
         background-color: #797979;
-        color: #66FFAA;
+        color: #FFF8B5;
     }
 `;
 
