@@ -40,15 +40,15 @@ export default function SignIn() {
             <Title>TechShop.uu</Title>
             <Form onSubmit={save}>
                 <Login>
-                    <input type='text' alt="login" name="name" id="login" onChange={e => {
+                    <input type='text' alt="email" name="email" id="email" placeholder="" required onChange={e => {
                         getUser(
                             e.target.name,
                             e.target.value
                         );}}/>
-                    <label htmlFor="login">Login</label>
+                    <label htmlFor="email">Email</label>
                 </Login>
                 <Password>
-                    <input type='password' alt="password" name="password" id="password" onChange={e => {
+                    <input type='password' alt="password" name="password" id="password" placeholder="" required onChange={e => {
                         getUser(
                             e.target.name,
                             e.target.value

@@ -1,30 +1,84 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components"
+import { signUp } from "../../database/database";
 
 export default function SignUp() {
     const navigate = useNavigate();
+    const [user, setUser] = useState({});
+    const [pass, setPass] = useState({});
+    const [send, setSend] = useState(false);
+
+    function getUser(name, value) {
+        setUser({
+            ... user,
+            [name]: value
+        });
+    }
+
+    function confirmPass(name, value) {
+        setPass({
+            ... pass,
+            [name]: value
+        });
+    }
+
+    function save(event) {
+        event.preventDefault();
+        setSend(true);
+    }
+
+    useEffect(() => {
+        if (send) {
+            signUp(user)
+                .then(res => {
+                    console.log('then');
+                    console.log(res);
+                })
+                .catch(err => {
+                    console.log('catch');
+                    console.log(err);
+                })
+        }
+    }, [send]);
 
     return (
         <Container>
             <Title>TechShop.uu</Title>
-            <Form>
+            <Form onSubmit={save}>
                 <Input>
-                    <input type='text' alt="name" name="name" id="name" />
+                    <input type='text' alt="name" name="name" id="name" placeholder="" required onChange={e => {
+                        getUser(
+                            e.target.name,
+                            e.target.value
+                        )}}/>
                     <label htmlFor="name">Nome</label>
                 </Input>
                 <Input>
-                    <input type='text' alt="login" name="login" id="login" />
-                    <label htmlFor="login">Login</label>
+                    <input type='text' alt="login" name="email" id="email" placeholder="" required onChange={e => {
+                        getUser(
+                            e.target.name,
+                            e.target.value
+                        )}}/>
+                    <label htmlFor="email">E-mail</label>
                 </Input>
                 <Password>
-                    <input type='password' alt="password" name="password" id="password" />
+                    <input type='password' alt="password" name="password" id="password" placeholder="" required onChange={e => {
+                        getUser(
+                            e.target.name,
+                            e.target.value
+                        )}}/>
                     <label htmlFor="password">Senha</label>
                 </Password>
                 <Password>
-                    <input type='password' alt="passwordConfirm" name="passwordConfirm" id="passwordConfirm" />
+                    <input type='password' alt="passwordConfirm" name="passwordConfirm" id="passwordConfirm" placeholder="" required onChange={e => {
+                        confirmPass(
+                            e.target.name,
+                            e.target.value
+                        )}}/>
                     <label htmlFor="passwordConfirm">Confirme sua senha</label>
                 </Password>
-                <Button>Entrar</Button>
+                <Button type={"submit"}>Entrar</Button>
             </Form>
             <Register onClick={() => navigate('/')}>Não tem uma senha? Cadastre-se</Register>
         </Container>
