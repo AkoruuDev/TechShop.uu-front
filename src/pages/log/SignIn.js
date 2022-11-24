@@ -42,6 +42,7 @@ export default function SignIn() {
                     console.log('catch');
                     console.log(err);
                     alert('Não foi possível realizar seu login. Tente novamente');
+                    document.location.reload();
                 })
         }
     }, [send]);

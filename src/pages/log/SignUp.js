@@ -29,22 +29,29 @@ export default function SignUp() {
 
     function save(event) {
         event.preventDefault();
+        let case1 = false;
+        let case2 = false;
+        let case3 = false;
 
         if (user.name.length === 0 || user.password.length === 0 || user.email.length === 0) {
             alert('Todos os campos devem ser preenchidos');
         } else {
-            setSend(true);
+            case1 = true;
         }
 
         if (user.password.length < 6) {
             alert('A senha deve conter 6 caracteres ou mais');
         } else {
-            setSend(true);
+            case2 = true;
         }
 
         if (user.password !== pass.passwordConfirm) {
             alert('As senhas não coincidem');
         } else {
+            case3 = true;
+        }
+
+        if (case1 && case2 && case3) {
             setSend(true);
         }
     }
@@ -59,6 +66,7 @@ export default function SignUp() {
                     console.log('catch');
                     console.log(err);
                     alert('Não foi possível realizar seu cadastro. Tente novamente');
+                    document.location.reload();
                 })
         }
     }, [send]);
@@ -119,7 +127,7 @@ export default function SignUp() {
                 </Password>
                 <Button type={"submit"}>Entrar</Button>
             </Form>
-            <Register onClick={() => navigate('/')}>Não tem uma senha? Cadastre-se</Register>
+            <Register onClick={() => navigate('/sign-in')}>Não tem uma senha? Cadastre-se</Register>
         </Container>
     )
 }
