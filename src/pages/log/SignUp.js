@@ -29,19 +29,36 @@ export default function SignUp() {
 
     function save(event) {
         event.preventDefault();
-        setSend(true);
+
+        if (user.name.length === 0 || user.password.length === 0 || user.email.length === 0) {
+            alert('Todos os campos devem ser preenchidos');
+        } else {
+            setSend(true);
+        }
+
+        if (user.password.length < 6) {
+            alert('A senha deve conter 6 caracteres ou mais');
+        } else {
+            setSend(true);
+        }
+
+        if (user.password !== pass.passwordConfirm) {
+            alert('As senhas não coincidem');
+        } else {
+            setSend(true);
+        }
     }
 
     useEffect(() => {
         if (send) {
             signUp(user)
                 .then(res => {
-                    console.log('then');
-                    console.log(res);
+                    navigate('/sign-in');
                 })
                 .catch(err => {
                     console.log('catch');
                     console.log(err);
+                    alert('Não foi possível realizar seu cadastro. Tente novamente');
                 })
         }
     }, [send]);
@@ -61,8 +78,6 @@ export default function SignUp() {
             setPassTypeConfirm('password')
         }
     }
-
-    console.log(passType)
 
     return (
         <Container>

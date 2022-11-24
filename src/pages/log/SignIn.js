@@ -20,19 +20,28 @@ export default function SignIn() {
 
     function save(event) {
         event.preventDefault();
-        setSend(true);
+        if (user.email.length === 0) {
+            alert('Campo email deve ser preenchido')
+        } else {
+            setSend(true);
+        }
+        if (user.password.length < 6) {
+            alert('A senha deve ter, no mínimo, 6 dígitos')
+        } else {
+            setSend(true);
+        }
     }
 
     useEffect(() => {
         if (send) {
             signIn(user)
                 .then(res => {
-                    console.log('then');
-                    console.log(res);
+                    navigate('/')
                 })
                 .catch(err => {
                     console.log('catch');
                     console.log(err);
+                    alert('Não foi possível realizar seu login. Tente novamente');
                 })
         }
     }, [send]);
@@ -45,7 +54,6 @@ export default function SignIn() {
         }
     }
 
-    console.log(passType)
     return (
         <Container>
             <Title>TechShop.uu</Title>
