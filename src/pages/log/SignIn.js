@@ -1,47 +1,63 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components"
 import { signIn } from "../../database/database";
 import off from "../../assets/eye-off.svg";
 import on from "../../assets/eye-on.svg";
+import { AuthContext } from "../../provider/auth";
 
 export default function SignIn() {
     const navigate = useNavigate();
-    const [user, setUser] = useState();
+    const [login, setLogin] = useState();
     const [send, setSend] = useState(false);
-    const [passType, setPassType] = useState('password')
+    const [passType, setPassType] = useState('password');
+
+    const { keepUserLogged } = useContext(AuthContext);
 
     function getUser(name, value) {
-        setUser({
-            ... user,
+        setLogin({
+            ... login,
             [name]: value
         });
     }
 
     function save(event) {
         event.preventDefault();
-        if (user.email.length === 0) {
+        let case1 = false;
+        let case2 = false;
+
+        if (login.email.length === 0) {
             alert('Campo email deve ser preenchido')
         } else {
-            setSend(true);
+            case1 = true;
         }
-        if (user.password.length < 6) {
+        if (login.password.length < 6) {
             alert('A senha deve ter, no mínimo, 6 dígitos')
         } else {
-            setSend(true);
+            case2 = true;
+        }
+
+        if (case1 && case2) {
+            setSend(true)
         }
     }
 
     useEffect(() => {
         if (send) {
-            signIn(user)
+            signIn(login)
                 .then(res => {
-                    navigate('/')
+                    keepUserLogged(JSON.stringify({
+                        name: res.data.name,
+                        email: res.data.email,
+                        token: res.data.token
+                    }));
+                    console.log(res);
+                    navigate('/');
                 })
                 .catch(err => {
                     console.log('catch');
                     console.log(err);
-                    alert('Não foi possível realizar seu login. Tente novamente');
+                    alert(err.response.data);
                     document.location.reload();
                 })
         }
