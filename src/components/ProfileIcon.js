@@ -2,18 +2,20 @@ import profile from "../assets/profile.svg";
 import logoff from "../assets/log-out.svg";
 import styled from "styled-components";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Profile() {
+export default function ProfileIcon() {
     const [show, setShow] = useState(false);
+    const navigate = useNavigate();
 
     return(
         <Container>
             <ProfileImage onClick={() => setShow(!show)} src={profile} alt='profile' />
             <Box show={show} onClick={() => setShow(!show)}></Box>
             <MenuList show={show}>
-                <div>Profile</div>
-                <div>Shopping Troyller</div>
-                <div>Settings</div>
+                <div onClick={() => navigate('/profile')}>Profile</div>
+                <div onClick={() => navigate('/shopping-trolley')}>Shopping Trolley</div>
+                <div onClick={() => navigate('/settings')}>Settings</div>
                 <div><img src={logoff} alt="exit" />Logoff</div>
             </MenuList>
         </Container>

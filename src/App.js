@@ -12,6 +12,7 @@ import SignUp from "./pages/log/SignUp";
 
 // admin
 import NewItem from "./pages/admin/NewItem";
+import Profile from "./pages/contents/Profile";
 
 export default function App() {
     return (
@@ -25,6 +26,7 @@ export default function App() {
                     <Route path="/" element={ < Home /> } />
                     <Route path="/shopping-trolley" element={ < ShoppingTrolley /> } />
                     <Route path="/checkout" element={ < Checkout /> } />
+                    <Route path="/profile" element={ < Profile /> } />
 
                     <Route path="/:admin/new-item" element={ < NewItem /> } />
                 </Routes>
