@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:4000';
 
 function signIn(user) {
     const promise = axios.post(`${BASE_URL}/sign-in`, user);
@@ -14,4 +14,13 @@ function signUp(user) {
     return promise;
 }
 
-export { signIn, signUp };
+function getUser(token) {
+    const headers = {
+        authorization: `Bearer ${token}`
+    };
+    const promise = axios.get(`${BASE_URL}/user`, {headers})
+
+    return promise;
+}
+
+export { signIn, signUp, getUser };

@@ -2,26 +2,45 @@ import profile from "../../assets/profile.svg";
 import cart from "../../assets/cart.svg";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../provider/auth";
+import { getUser } from "../../database/database";
 
 export default function Profile() {
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
+    const log = JSON.parse(user);
+    const [info, setInfo] = useState();
 
-    console.log(user);
+    useEffect(() => {
+        getUser(log.token)
+        .then(res => {
+            setInfo(res.data)
+            console.log('Then')
+            console.log(res)
+        })
+        .catch(err => {
+            console.log('catch')
+            console.log(err)
+        })
+    }, [])
     
+    if (info === undefined) {
+        return(<>Loading...</>)
+    }
+
     return(
         <Container>
             <img src={profile} alt="profile" />
             <Info>
                 <h1>Name</h1>
-                <p>{'Name'}</p>
+                <p>{info.name}</p>
             </Info>
             <Info>
                 <h1>Email</h1>
-                <p>{'Email'}</p>
+                <p>{info.email}</p>
             </Info>
+            <Divisor></Divisor>
             <Button onClick={() => {navigate('/shopping-trolley')}}>
                 <img src={cart} alt='cart' />
                 Shopping Trolley
@@ -41,8 +60,14 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
 
+    overflow-y: auto;
+
     & img {
         width: 30vw;
+    }
+
+    &::-webkit-scrollbar {
+        display: none;
     }
 `
 
@@ -58,6 +83,10 @@ const Info = styled.div`
         padding-top: 5px;
         padding-left: 15px;
     }
+`
+
+const Divisor = styled.div`
+    height: 50px;
 `
 
 const Button = styled.div`

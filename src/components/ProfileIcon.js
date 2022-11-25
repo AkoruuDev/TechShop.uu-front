@@ -1,5 +1,5 @@
 import profile from "../assets/profile.svg";
-import logoff from "../assets/log-out.svg";
+import logoffImg from "../assets/log-out.svg";
 import styled from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,15 +8,21 @@ export default function ProfileIcon() {
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
 
+    function logoff() {
+        localStorage.removeItem('log');
+        navigate('/')
+        document.location.reload()
+    }
+
     return(
         <Container>
             <ProfileImage onClick={() => setShow(!show)} src={profile} alt='profile' />
-            <Box show={show} onClick={() => setShow(!show)}></Box>
+            <Box show={show} onClick={() => setShow(false)}></Box>
             <MenuList show={show}>
                 <div onClick={() => navigate('/profile')}>Profile</div>
                 <div onClick={() => navigate('/shopping-trolley')}>Shopping Trolley</div>
                 <div onClick={() => navigate('/settings')}>Settings</div>
-                <div><img src={logoff} alt="exit" />Logoff</div>
+                <div onClick={() => logoff()}><img src={logoffImg} alt="exit" />Logoff</div>
             </MenuList>
         </Container>
     )
@@ -36,18 +42,6 @@ const Container = styled.div`
 const ProfileImage = styled.img`
     width: 50px;
     cursor: pointer;
-`
-
-const Box = styled.div`
-    display: ${props => props.show ? 'block' : 'none'};
-    width: 100vw;
-    height: 100vh;
-    background-color: #FFFFFF01;
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    z-index: 10;
 `
 
 const MenuList = styled.nav`
@@ -81,4 +75,16 @@ const MenuList = styled.nav`
         width: 20px;
         margin-right: 8px;
     }
+`
+
+const Box = styled.div`
+/*     display: ${props => props.show ? 'block' : 'none'};
+    width: 100vw;
+    height: 100vh;
+    background-color: #FFFFFF;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    z-index: 10; */
 `

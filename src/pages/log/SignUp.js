@@ -127,7 +127,7 @@ export default function SignUp() {
                 </Password>
                 <Button type={"submit"}>Entrar</Button>
             </Form>
-            <Register onClick={() => navigate('/sign-in')}>Não tem uma senha? Cadastre-se</Register>
+            <Register onClick={() => navigate('/sign-in')}>Já tem uma conta? Entre</Register>
         </Container>
     )
 }
