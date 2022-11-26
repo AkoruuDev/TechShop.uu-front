@@ -1,40 +1,76 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components"
 import { signIn } from "../../database/database";
+import off from "../../assets/eye-off.svg";
+import on from "../../assets/eye-on.svg";
+import { AuthContext } from "../../provider/auth";
 
 export default function SignIn() {
     const navigate = useNavigate();
-    const [user, setUser] = useState();
+    const [login, setLogin] = useState();
     const [send, setSend] = useState(false);
+    const [passType, setPassType] = useState('password');
+
+    const { keepUserLogged } = useContext(AuthContext);
 
     function getUser(name, value) {
-        setUser({
-            ... user,
+        setLogin({
+            ... login,
             [name]: value
         });
     }
 
     function save(event) {
         event.preventDefault();
-        setSend(true);
+        let case1 = false;
+        let case2 = false;
+
+        if (login.email.length === 0) {
+            alert('Campo email deve ser preenchido')
+        } else {
+            case1 = true;
+        }
+        if (login.password.length < 6) {
+            alert('A senha deve ter, no mínimo, 6 dígitos')
+        } else {
+            case2 = true;
+        }
+
+        if (case1 && case2) {
+            setSend(true)
+        }
     }
 
     useEffect(() => {
         if (send) {
-            signIn(user)
+            signIn(login)
                 .then(res => {
-                    console.log('then');
+                    keepUserLogged(JSON.stringify({
+                        name: res.data.name,
+                        email: res.data.email,
+                        token: res.data.token
+                    }));
                     console.log(res);
+                    navigate('/');
                 })
                 .catch(err => {
                     console.log('catch');
                     console.log(err);
+                    alert(err.response.data);
+                    document.location.reload();
                 })
         }
     }, [send]);
 
-    console.log(user)
+    function showPass() {
+        if (passType === 'password') {
+            setPassType('text')
+        } else {
+            setPassType('password')
+        }
+    }
+
     return (
         <Container>
             <Title>TechShop.uu</Title>
@@ -48,12 +84,13 @@ export default function SignIn() {
                     <label htmlFor="email">Email</label>
                 </Login>
                 <Password>
-                    <input type='password' alt="password" name="password" id="password" placeholder="" required onChange={e => {
+                    <input type={passType} alt="password" name="password" id="password" placeholder="" required onChange={e => {
                         getUser(
                             e.target.name,
                             e.target.value
                         );}}/>
                     <label htmlFor="password">Senha</label>
+                    <img onClick={showPass} src={passType === 'password' ? off : on} alt="eye"/>
                 </Password>
                 <Button type={'submit'}>Entrar</Button>
             </Form>
@@ -130,6 +167,14 @@ const Login = styled.div`
 `;
 
 const Password = styled(Login)`
+    & img {
+        width: 20px;
+        position: absolute;
+        top: 25px;
+        right: 20px;
+        cursor: pointer;
+        
+    }
 `;
 
 const Button = styled.button`
@@ -142,6 +187,7 @@ const Button = styled.button`
     color: #797979;
     font-size: 22px;
     transition: all .3s ease-in-out;
+    cursor: pointer;
 
     &:hover {
         background-color: #797979;

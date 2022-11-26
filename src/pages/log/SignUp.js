@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components"
 import { signUp } from "../../database/database";
+import off from "../../assets/eye-off.svg";
+import on from "../../assets/eye-on.svg";
 
 export default function SignUp() {
     const navigate = useNavigate();
     const [user, setUser] = useState({});
     const [pass, setPass] = useState({});
     const [send, setSend] = useState(false);
+    const [passType, setPassType] = useState('password');
+    const [passTypeConfirm, setPassTypeConfirm] = useState('password');
 
     function getUser(name, value) {
         setUser({
@@ -25,22 +29,63 @@ export default function SignUp() {
 
     function save(event) {
         event.preventDefault();
-        setSend(true);
+        let case1 = false;
+        let case2 = false;
+        let case3 = false;
+
+        if (user.name.length === 0 || user.password.length === 0 || user.email.length === 0) {
+            alert('Todos os campos devem ser preenchidos');
+        } else {
+            case1 = true;
+        }
+
+        if (user.password.length < 6) {
+            alert('A senha deve conter 6 caracteres ou mais');
+        } else {
+            case2 = true;
+        }
+
+        if (user.password !== pass.passwordConfirm) {
+            alert('As senhas não coincidem');
+        } else {
+            case3 = true;
+        }
+
+        if (case1 && case2 && case3) {
+            setSend(true);
+        }
     }
 
     useEffect(() => {
         if (send) {
             signUp(user)
                 .then(res => {
-                    console.log('then');
-                    console.log(res);
+                    navigate('/sign-in');
                 })
                 .catch(err => {
                     console.log('catch');
                     console.log(err);
+                    alert('Não foi possível realizar seu cadastro. Tente novamente');
+                    document.location.reload();
                 })
         }
     }, [send]);
+
+    function togglePassword() {
+        if (passType === 'password') {
+            setPassType('text');
+        } else {
+            setPassType('password')
+        }
+    }
+
+    function togglePasswordConfirm() {
+        if (passTypeConfirm === 'password') {
+            setPassTypeConfirm('text');
+        } else {
+            setPassTypeConfirm('password')
+        }
+    }
 
     return (
         <Container>
@@ -63,24 +108,26 @@ export default function SignUp() {
                     <label htmlFor="email">E-mail</label>
                 </Input>
                 <Password>
-                    <input type='password' alt="password" name="password" id="password" placeholder="" required onChange={e => {
+                    <input type={passType} alt="password" name="password" id="password" placeholder="" required onChange={e => {
                         getUser(
                             e.target.name,
                             e.target.value
                         )}}/>
                     <label htmlFor="password">Senha</label>
+                    <img onClick={togglePassword} src={passType === 'password' ? off : on} alt='eye' />
                 </Password>
                 <Password>
-                    <input type='password' alt="passwordConfirm" name="passwordConfirm" id="passwordConfirm" placeholder="" required onChange={e => {
+                    <input type={passTypeConfirm} alt="passwordConfirm" name="passwordConfirm" id="passwordConfirm" placeholder="" required onChange={e => {
                         confirmPass(
                             e.target.name,
                             e.target.value
                         )}}/>
                     <label htmlFor="passwordConfirm">Confirme sua senha</label>
+                    <img onClick={togglePasswordConfirm} src={passTypeConfirm === 'password' ? off : on} alt='eye' />
                 </Password>
                 <Button type={"submit"}>Entrar</Button>
             </Form>
-            <Register onClick={() => navigate('/')}>Não tem uma senha? Cadastre-se</Register>
+            <Register onClick={() => navigate('/sign-in')}>Não tem uma senha? Cadastre-se</Register>
         </Container>
     )
 }
@@ -153,6 +200,14 @@ const Input = styled.div`
 `;
 
 const Password = styled(Input)`
+    & img {
+        width: 20px;
+        position: absolute;
+        top: 25px;
+        right: 20px;
+        cursor: pointer;
+        
+    }
 `;
 
 const Button = styled.button`
