@@ -23,4 +23,13 @@ function getUser(token) {
     return promise;
 }
 
-export { signIn, signUp, getUser };
+function getItems(token) {
+    const headers = {
+        authorization: `Bearer ${token}`
+    };
+    const promise = axios.get(`${BASE_URL}/cart`, {headers})
+
+    return promise;
+}
+
+export { signIn, signUp, getUser, getItems };
