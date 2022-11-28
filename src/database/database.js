@@ -1,17 +1,23 @@
-import axios from "axios";
+import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:5000';
 
 function signIn(user) {
-    const promise = axios.post(`${BASE_URL}/sign-in`, user);
+  const promise = axios.post(`${BASE_URL}/sign-in`, user);
 
-    return promise;
+  return promise;
 }
 
 function signUp(user) {
-    const promise = axios.post(`${BASE_URL}/sign-up`, user);
+  const promise = axios.post(`${BASE_URL}/sign-up`, user);
 
-    return promise;
+  return promise;
 }
 
-export { signIn, signUp };
+function productsGet() {
+  const promise = axios.get(`${BASE_URL}/products`);
+
+  return promise;
+}
+
+export { signIn, signUp, productsGet };
