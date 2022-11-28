@@ -1,15 +1,22 @@
+import { Cart } from '@styled-icons/bootstrap/Cart';
+import { CartFill } from '@styled-icons/bootstrap/CartFill';
+import { LogOut } from '@styled-icons/evaicons-solid/LogOut';
 import { Search } from '@styled-icons/evaicons-solid/Search';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { productsGet } from '../../database/database';
+import { productsCartGet, productsGet } from '../../database/database';
+import { AuthContext } from '../../provider/auth';
 import ItemCard from './ItemCard';
 
 export default function Home() {
-  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { user } = useContext(AuthContext);
+  const userLogged = JSON.parse(user);
+  const [cartEmpty, setCartEmpty] = useState(true);
+
   useEffect(() => {
     setLoading(true);
     (async () => {
@@ -23,35 +30,57 @@ export default function Home() {
     })();
     setLoading(false);
   }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await productsCartGet(userLogged.token);
+        setCartEmpty(response.data.length === 0);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+  function handleLogout() {
+    localStorage.removeItem('log');
+    document.location.reload();
+  }
   return (
     <Page>
       <Header>
-        <Title> TechShop.uu</Title>
-        <RightHeader>
-          {
-            
-          }
+        <StyledNav>
+          <Title> TechShop.uu</Title>
+          <MyForm>
+            <MyInput>
+              <input type='text' name='description' required />
+              <label>Search</label>
+            </MyInput>
+            <MyButton>
+              <StyledSearch />
+            </MyButton>
+          </MyForm>
           <UserInfo>
-            teste
+            {userLogged ? (
+              <>
+                Olá,&ensp;
+                <MyLink to={'/profile'}>{userLogged.name.split(' ')[0]}</MyLink>
+                &emsp;|&emsp;
+                <MyLink to={'/shopping-trolley'}>
+                  {cartEmpty ? <StyledCart /> : <StyledCartFill />}
+                </MyLink>
+                &emsp;|&emsp;
+                <StyledP onClick={handleLogout}>
+                  <StyledLogOut />
+                </StyledP>
+              </>
+            ) : (
+              <>
+                <MyLink to={'/sign-in'}>Sign-in</MyLink>
+                &emsp;|&emsp;
+                <MyLink to={'/sign-up'}>Sign-up</MyLink>
+              </>
+            )}
           </UserInfo>
-        <MyForm>
-          <MyInput>
-            <input type='text' name='description' required />
-            <label>Search</label>
-          </MyInput>
-          <MySelect name='category'>
-            <option value='' defaultValue>
-              Categories
-            </option>
-            <option value='cellphones'>Cellphones</option>
-            <option value='computers'>Computers</option>
-            <option value='peripherals'>Peripherals</option>
-          </MySelect>
-          <MyButton>
-            <StyledSearch />
-          </MyButton>
-        </MyForm>
-        </RightHeader>
+        </StyledNav>
       </Header>
       <Main>
         {!!error && <Status>Desculpe, mas tivemos um problema...</Status>}
@@ -69,13 +98,16 @@ export default function Home() {
   );
 }
 const Page = styled.div``;
-
 const Header = styled.header`
   background-color: #fff8b5;
-  height: 10rem;
+`;
+const StyledNav = styled.nav`
+  max-width: 75rem;
+  height: 6rem;
   position: sticky;
   top: 0;
   padding: 1rem;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -85,17 +117,38 @@ const Title = styled.div`
   font-size: 3rem;
 `;
 const UserInfo = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
   color: #797979;
   font-weight: 700;
   font-size: 1rem;
-  `;
-const RightHeader = styled.div`
-  display: flex;
-  height: 8rem;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-end;
 `;
+const StyledP = styled.p`
+  cursor: pointer;
+  width: fit-content;
+  :hover {
+    filter: brightness(1.2);
+  }
+`;
+const StyledCart = styled(Cart)`
+  width: 1.5rem;
+  height: 1.5rem;
+`;
+const StyledCartFill = styled(CartFill)`
+  width: 1.5rem;
+  height: 1.5rem;
+`;
+const StyledLogOut = styled(LogOut)`
+  width: 1.5rem;
+  height: 1.5rem;
+`;
+const MyLink = styled(Link)`
+  :hover {
+    filter: brightness(1.2);
+  }
+`;
+
 const MyForm = styled.form`
   min-width: 15rem;
   max-width: 20rem;
@@ -139,29 +192,22 @@ const MyInput = styled.div`
     transition: all 0.3s ease-in-out;
   }
 `;
-const MySelect = styled.select`
-  width: fit-content;
-  width: 100%;
-  border: 3px solid #797979;
-  background-color: transparent;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #797979;
-`;
 const MyButton = styled.button`
   max-width: fit-content;
   width: 100%;
   border: 3px solid #797979;
-  border-left: 0px;
   border-radius: 0 1rem 1rem 0;
   background-color: transparent;
   color: #797979;
+  cursor: pointer;
 `;
 const StyledSearch = styled(Search)`
   width: 1.5rem;
-  height:1.5rem;
+  height: 1.5rem;
 `;
 const Main = styled.main`
+  margin: auto;
+  max-width: 75rem;
   padding: 2rem;
 `;
 const ProductsLit = styled.ul`

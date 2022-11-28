@@ -20,4 +20,42 @@ function productsGet() {
   return promise;
 }
 
-export { signIn, signUp, productsGet };
+function productsCartGet(token) {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const promise = axios.get(`${BASE_URL}/cart`, config);
+
+  return promise;
+}
+function productsCartPost(product, token) {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const promise = axios.post(`${BASE_URL}/cart`, { product }, config);
+
+  return promise;
+}
+function productsCartDelete(product, token) {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const promise = axios.delete(`${BASE_URL}/cart`, { product }, config);
+
+  return promise;
+}
+
+export {
+  signIn,
+  signUp,
+  productsGet,
+  productsCartGet,
+  productsCartPost,
+  productsCartDelete,
+};

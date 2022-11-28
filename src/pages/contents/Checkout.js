@@ -1,5 +1,3 @@
 export default function Checkout() {
-    return (
-        <>Checkout</>
-    )
+  return <>Checkout</>;
 }
